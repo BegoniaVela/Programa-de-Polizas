@@ -55,8 +55,6 @@ Con este enfoque se busca:
 
 <br>
 <br>
-<br>
-<br>
 
 ---
 
