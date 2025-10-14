@@ -1,3 +1,17 @@
+from Proyecto_Polizas import (
+    polizas,
+    cargar_polizas_desde_csv,
+    actualizar_semaforos,
+    buscar_poliza_por_id,
+    calcular_costo_poliza,
+    obtener_tasa_prima,
+    factores_tipo_poliza,
+    filtrar_por_semaforo_simple
+)
+from agregar_nueva_poliza import agregar_nueva_poliza
+from ordenar_polizas import mostrar_polizas_pila, mostrar_polizas_cola
+
+
 def main():
     if not cargar_polizas_desde_csv():
         return
