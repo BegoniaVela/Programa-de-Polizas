@@ -11,3 +11,6 @@ def mostrar_polizas_cola(lista_polizas):
     while cola:
         poliza = cola.popleft()
         print(poliza)
+
+    except Exception as e:
+        print(f"Error al agregar póliza: {e}")
