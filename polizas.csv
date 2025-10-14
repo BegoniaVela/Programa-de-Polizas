@@ -1,0 +1,8 @@
+id,cliente,fecha_vencimiento,grupo_riesgo,num_trabajadores,planilla_bruta_mensual,tipo_poliza,estado,aseguradora,contacto_emergencia,cobertura_adicional,historico_renovaciones
+1,Empresa ABC,2025-09-15,II,80,50000,SCTR Salud,ACTIVA,Rimac Seguros,+51 999888777,1500,2
+2,Constructora XYZ,2025-11-01,III,150,80000,SCTR Pension,ACTIVA,Rimac Seguros,+51 988777666,2000,1
+3,Minera PQR,2025-11-15,V,500,120000,Vida Ley,ACTIVA,Rimac Seguros,+51 977666555,5000,3
+4,Consultoría LMN,2024-10-20,I,25,30000,SCTR Salud,ACTIVA,Rimac Seguros,+51 966555444,800,0
+5,Hotel Resort,2025-12-25,II,300,90000,SCTR Pension,ACTIVA,Rimac Seguros,+51 955444333,3000,4
+6,Fábrica Textil,2024-11-30,III,200,75000,Vida Ley,ACTIVA,Rimac Seguros,+51 944333222,1800,1
+7,Hospital Regional,2025-10-15,II,400,110000,SCTR Salud,ACTIVA,Rimac Seguros,+51 933222111,2500,2
