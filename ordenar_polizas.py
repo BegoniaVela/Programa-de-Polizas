@@ -1,3 +1,6 @@
+from collections import deque
+from Proyecto_Polizas import polizas
+
 def mostrar_polizas_pila(lista_polizas):
     pila = deque(lista_polizas)
     print("\n--- PÓLIZAS (PILA - Últimas a primero) ---")
@@ -11,6 +14,3 @@ def mostrar_polizas_cola(lista_polizas):
     while cola:
         poliza = cola.popleft()
         print(poliza)
-
-    except Exception as e:
-        print(f"Error al agregar póliza: {e}")
