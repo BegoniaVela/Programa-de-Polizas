@@ -1,8 +1,11 @@
+from Proyecto_Polizas import Poliza
+
 def agregar_nueva_poliza():
+    objeto_poliza = Poliza()
     try:
         print("\n--- AGREGAR NUEVA PÓLIZA ---")
         id_poliza = int(input("ID de póliza: "))
-        if buscar_poliza_por_id(polizas, id_poliza):
+        if objeto_poliza.buscar_poliza_por_id(polizas, id_poliza):
             print("Ya existe una póliza con ese ID.")
             return
         
