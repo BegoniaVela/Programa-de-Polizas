@@ -15,12 +15,11 @@ class Poliza:
         self.tipo_poliza = tipo_poliza  
         self.semaforo = ""
         
-        # NUEVOS ATRIBUTOS
+        # Atributos adicionales
         self.estado = kwargs.get('estado', 'ACTIVA')
         self.fecha_emision = kwargs.get('fecha_emision', datetime.now().date())
         self.aseguradora = kwargs.get('aseguradora', 'Aseguradora Standard')
         self.contacto_emergencia = kwargs.get('contacto_emergencia', '')
-        self.cobertura_adicional = kwargs.get('cobertura_adicional', 0.0)
         self.dias_gracia = kwargs.get('dias_gracia', 5)
         self.historico_renovaciones = kwargs.get('historico_renovaciones', 0)
         self.periodo_cobertura = kwargs.get('periodo_cobertura', 12)
@@ -64,12 +63,9 @@ def cargar_polizas_desde_csv(archivo='polizas.csv'):
             reader = csv.DictReader(file)
             for row in reader:
                 try:
-                    # Convertir datos del CSV
                     id_poliza = int(row['id'])
                     num_trabajadores = int(row['num_trabajadores'])
                     planilla_bruta = float(row['planilla_bruta_mensual'])
-                    
-                    # Convertir fecha (formato: YYYY-MM-DD)
                     fecha_vencimiento = datetime.strptime(row['fecha_vencimiento'], '%Y-%m-%d').date()
                     
                     poliza = Poliza(
@@ -83,10 +79,8 @@ def cargar_polizas_desde_csv(archivo='polizas.csv'):
                         estado=row.get('estado', 'ACTIVA'),
                         aseguradora=row.get('aseguradora', 'Aseguradora Standard'),
                         contacto_emergencia=row.get('contacto_emergencia', ''),
-                        cobertura_adicional=float(row.get('cobertura_adicional', 0)),
                         historico_renovaciones=int(row.get('historico_renovaciones', 0))
                     )
-                    
                     polizas.append(poliza)
                     
                 except (ValueError, KeyError) as e:
@@ -95,50 +89,38 @@ def cargar_polizas_desde_csv(archivo='polizas.csv'):
         print(f"✅ Se cargaron {len(polizas)} pólizas desde {archivo}")
         return True
         
-    except FileNotFoundError:
-        print(f" Archivo {archivo} no encontrado. Creando archivo de ejemplo...")
-        crear_csv_ejemplo()
-        return False
     except Exception as e:
         print(f" Error al cargar CSV: {e}")
         return False
-
-# Función para crear CSV de ejemplo si no existe
-def crear_csv_ejemplo():
-    datos_ejemplo = [
-        ['id', 'cliente', 'fecha_vencimiento', 'grupo_riesgo', 'num_trabajadores', 
-         'planilla_bruta_mensual', 'tipo_poliza', 'estado', 'aseguradora', 'contacto_emergencia', 
-         'cobertura_adicional', 'historico_renovaciones'],
-        [1, 'Empresa ABC', '2024-08-15', 'II', 80, 50000, 'SCTR Salud', 'ACTIVA', 
-         'Rimac Seguros', '+51 999888777', 1500, 2],
-        [2, 'Rimac Seguros', '2024-09-01', 'III', 150, 80000, 'SCTR Pension', 'ACTIVA',
-         'Aseguradora Nacional', '+51 988777666', 2000, 1],
-        [3, 'Rimac Seguros', '2024-07-10', 'V', 500, 120000, 'Vida Ley', 'ACTIVA',
-         'MinerSeguros', '+51 977666555', 5000, 3],
-        [4, 'Rimac Seguros', '2024-10-20', 'I', 25, 30000, 'SCTR Salud', 'ACTIVA',
-         'Seguros Premium', '+51 966555444', 800, 0],
-        [5, 'Rimac Seguros', '2024-06-25', 'II', 300, 90000, 'SCTR Pension', 'ACTIVA',
-         'Tourism Seguros', '+51 955444333', 3000, 4],
-        [6, 'Rimac Seguros', '2024-11-30', 'III', 200, 75000, 'Vida Ley', 'ACTIVA',
-         'Industrial Seg', '+51 944333222', 1800, 1],
-        [7, 'Rimac Seguros', '2024-12-15', 'II', 400, 110000, 'SCTR Salud', 'ACTIVA',
-         'Salud Seguros', '+51 933222111', 2500, 2]
-    ]
     
-    try:
-        with open('polizas.csv', 'w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerows(datos_ejemplo)
-        print("✅ Archivo 'polizas.csv' creado con datos de ejemplo")
-        print("📋 Por favor, edita el archivo con tus datos reales y ejecuta el programa nuevamente")
-    except Exception as e:
-        print(f" Error al crear archivo de ejemplo: {e}")
+# Guardar pólizas en CSV
+def guardar_polizas_en_csv(archivo='polizas.csv'):
+    with open(archivo, 'w', newline='', encoding='utf-8') as file:
+        fieldnames = ['id', 'cliente', 'fecha_vencimiento', 'grupo_riesgo',
+                      'num_trabajadores', 'planilla_bruta_mensual', 'tipo_poliza',
+                      'estado', 'aseguradora', 'contacto_emergencia', 'historico_renovaciones']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for p in polizas:
+            writer.writerow({
+                'id': p.id,
+                'cliente': p.cliente,
+                'fecha_vencimiento': p.fecha_vencimiento.isoformat(),
+                'grupo_riesgo': p.grupo_riesgo,
+                'num_trabajadores': p.num_trabajadores,
+                'planilla_bruta_mensual': p.planilla_bruta_mensual,
+                'tipo_poliza': p.tipo_poliza,
+                'estado': p.estado,
+                'aseguradora': p.aseguradora,
+                'contacto_emergencia': p.contacto_emergencia,
+                'historico_renovaciones': p.historico_renovaciones
+            })
+    print("💾 Cambios guardados en el archivo CSV")
 
-# Función recursiva para calcular días hasta vencimiento
+# Calcular días y semáforo
 def dias_hasta_vencimiento(fecha_vencimiento, fecha_actual=None):
     if fecha_actual is None:
         fecha_actual = datetime.now().date()
-    
     if fecha_vencimiento == fecha_actual:
         return 0
     elif fecha_vencimiento < fecha_actual:
@@ -146,7 +128,6 @@ def dias_hasta_vencimiento(fecha_vencimiento, fecha_actual=None):
     else:
         return (fecha_vencimiento - fecha_actual).days
 
-# Función recursiva para determinar semáforo
 def determinar_semaforo(dias):
     if dias >= 60:
         return "🟢 VERDE"
@@ -157,61 +138,47 @@ def determinar_semaforo(dias):
     else:
         return "⚫ VENCIDA"
 
-# Función recursiva para actualizar semáforos de todas las pólizas
 def actualizar_semaforos(lista_polizas, index=0):
     if index >= len(lista_polizas):
         return
-    
     poliza = lista_polizas[index]
     dias = dias_hasta_vencimiento(poliza.fecha_vencimiento)
     poliza.semaforo = determinar_semaforo(dias)
-    
     actualizar_semaforos(lista_polizas, index + 1)
 
-# Función recursiva para buscar póliza por ID
+# Buscar y cálculos
 def buscar_poliza_por_id(lista_polizas, id_buscado, index=0):
     if index >= len(lista_polizas):
         return None
-    
     if lista_polizas[index].id == id_buscado:
         return lista_polizas[index]
-    
     return buscar_poliza_por_id(lista_polizas, id_buscado, index + 1)
 
-# Función para obtener tasa de prima según grupo de riesgo
 def obtener_tasa_prima(grupo_riesgo):
-    return sum(tasas_prima[grupo_riesgo]) / 2  # Promedio del rango
+    return sum(tasas_prima[grupo_riesgo]) / 2
 
-# Función recursiva para calcular descuento por trabajadores
 def calcular_descuento_trabajadores(num_trabajadores, index=0):
     if index >= len(descuentos):
-        return 1.0  # Sin descuento
-    
+        return 1.0
     min_trab, max_trab, descuento = descuentos[index]
-    
     if min_trab <= num_trabajadores <= max_trab:
         return 1 - descuento
-    
     return calcular_descuento_trabajadores(num_trabajadores, index + 1)
 
-# Función para calcular costo considerando tipo de póliza
 def calcular_costo_poliza(poliza):
     planilla_anual = poliza.planilla_bruta_mensual * 12
     tasa_prima = obtener_tasa_prima(poliza.grupo_riesgo) / 100 
     descuento = calcular_descuento_trabajadores(poliza.num_trabajadores)
     factor_tipo = factores_tipo_poliza.get(poliza.tipo_poliza, 1.0)
-    
-    costo_base = planilla_anual * tasa_prima * descuento * factor_tipo
-    costo_total = costo_base + poliza.cobertura_adicional
-    
-    return costo_base, costo_total
+    costo_total = planilla_anual * tasa_prima * descuento * factor_tipo
+    return costo_total
 
-# Función para filtrar por semáforo
+# Filtrado por semáforo
 def filtrar_por_semaforo_simple():
     print("\nFiltrar por semáforo:")
-    print("1. Verde")
-    print("2. Naranja") 
-    print("3. Rojo")
+    print("1. Verde > 60 Días restantes")
+    print("2. Naranja < 30 Días restantes") 
+    print("3. Rojo < 15 Días restantes")
     print("4. Vencidas")
     
     opcion = input("Seleccione opción (1-4): ")
@@ -238,56 +205,55 @@ def filtrar_por_semaforo_simple():
         for poliza in resultado:
             print(poliza)
     else:
-        print("No se encontraron pólizas")
+        print("No se encontraron pólizas con ese semáforo")
 
-# Función recursiva para filtrar por tipo de póliza
-def filtrar_por_tipo_poliza(lista_polizas, tipo_buscado, index=0, resultado=None):
-    if resultado is None:
-        resultado = []
-    
-    if index >= len(lista_polizas):
-        return resultado
-    
-    if lista_polizas[index].tipo_poliza == tipo_buscado:
-        resultado.append(lista_polizas[index])
-    
-    return filtrar_por_tipo_poliza(lista_polizas, tipo_buscado, index + 1, resultado)
-
-# Función para mostrar pólizas usando pila (LIFO)
+# Mostrar y filtrar (pila/cola)
 def mostrar_polizas_pila(lista_polizas):
     pila = deque(lista_polizas)
     print("\n--- PÓLIZAS (PILA - Últimas a primero) ---")
-    
     while pila:
         poliza = pila.pop()
         print(poliza)
 
-# Función para mostrar pólizas usando cola (FIFO)
 def mostrar_polizas_cola(lista_polizas):
     cola = deque(lista_polizas)
     print("\n--- PÓLIZAS (COLA - Primeras a últimas) ---")
-    
     while cola:
         poliza = cola.popleft()
         print(poliza)
 
-# Función para mostrar estadísticas por tipo de póliza
-def mostrar_estadisticas_tipos():
-    print("\n--- ESTADÍSTICAS POR TIPO DE PÓLIZA ---")
-    
-    for tipo in factores_tipo_poliza.keys():
-        polizas_tipo = filtrar_por_tipo_poliza(polizas, tipo)
-        if polizas_tipo:
-            total_costo = sum(calcular_costo_poliza(p)[1] for p in polizas_tipo)
-            print(f"{tipo}: {len(polizas_tipo)} pólizas - Costo total: S/. {total_costo:,.2f}")
+# Nueva función: agregar póliza (guarda en CSV)
+def agregar_nueva_poliza():
+    try:
+        print("\n--- AGREGAR NUEVA PÓLIZA ---")
+        id_poliza = int(input("ID de póliza: "))
+        if buscar_poliza_por_id(polizas, id_poliza):
+            print("Ya existe una póliza con ese ID.")
+            return
+        
+        cliente = input("Cliente: ")
+        fecha_vencimiento = datetime.strptime(input("Fecha de vencimiento (YYYY-MM-DD): "), '%Y-%m-%d').date()
+        grupo_riesgo = input("Grupo de riesgo (I-V): ").upper()
+        num_trabajadores = int(input("Número de trabajadores: "))
+        planilla_bruta_mensual = float(input("Planilla bruta mensual (S/.): "))
+        tipo_poliza = input("Tipo de póliza (SCTR Salud, SCTR Pension, Vida Ley): ")
+        aseguradora = input("Aseguradora: ")
+        contacto_emergencia = input("Contacto de emergencia: ")
 
-# Función principal
+        nueva = Poliza(id_poliza, cliente, fecha_vencimiento, grupo_riesgo,
+                       num_trabajadores, planilla_bruta_mensual, tipo_poliza,
+                       aseguradora=aseguradora, contacto_emergencia=contacto_emergencia)
+        polizas.append(nueva)
+        actualizar_semaforos(polizas)
+        guardar_polizas_en_csv()
+        print(f"Póliza {id_poliza} agregada exitosamente.")
+    except Exception as e:
+        print(f"Error al agregar póliza: {e}")
+
+# Menú principal
 def main():
-    # Cargar pólizas desde CSV
     if not cargar_polizas_desde_csv():
         return
-    
-    # Actualizar semáforos
     actualizar_semaforos(polizas)
     
     while True:
@@ -299,7 +265,7 @@ def main():
         print("5. Calcular costo de póliza")
         print("6. Mostrar pólizas como PILA")
         print("7. Mostrar pólizas como COLA")
-        print("8. Mostrar estadísticas por tipo")
+        print("8. Agregar nueva póliza")
         print("9. Salir")
         
         opcion = input("Seleccione una opción: ")
@@ -308,77 +274,50 @@ def main():
             print("\n--- TODAS LAS PÓLIZAS ---")
             for poliza in polizas:
                 print(f"{poliza} - Trabajadores: {poliza.num_trabajadores} - Tipo: {poliza.tipo_poliza}")
-                
         elif opcion == "2":
             try:
                 id_buscado = int(input("Ingrese ID de póliza: "))
                 poliza = buscar_poliza_por_id(polizas, id_buscado)
                 if poliza:
-                    print(f"\n Póliza encontrada:")
-                    print(f"ID: {poliza.id}")
-                    print(f"Cliente: {poliza.cliente}")
-                    print(f"Tipo: {poliza.tipo_poliza}")
-                    print(f"Grupo Riesgo: {poliza.grupo_riesgo}")
-                    print(f"Trabajadores: {poliza.num_trabajadores}")
-                    print(f"Planilla: S/. {poliza.planilla_bruta_mensual:,.2f}")
-                    print(f"Vencimiento: {poliza.fecha_vencimiento}")
-                    print(f"Semáforo: {poliza.semaforo}")
-                    print(f"Aseguradora: {poliza.aseguradora}")
+                    print(f"\n Póliza encontrada:\n{poliza}")
                 else:
-                    print(" Póliza no encontrada")
+                    print("Póliza no encontrada.")
             except ValueError:
-                print(" ID debe ser un número")
-                
+                print("ID debe ser un número.")
         elif opcion == "3":
             filtrar_por_semaforo_simple()
-                
         elif opcion == "4":
-            print("Tipos disponibles: SCTR Salud, SCTR Pension, Vida Ley")
-            tipo = input("Ingrese tipo de póliza a filtrar: ")
-            resultado = filtrar_por_tipo_poliza(polizas, tipo)
-            
+            tipo = input("Tipo de póliza (SCTR Salud, SCTR Pension, Vida Ley): ")
+            resultado = [p for p in polizas if p.tipo_poliza == tipo]
             if resultado:
-                print(f"\n Pólizas de tipo {tipo}:")
-                for poliza in resultado:
-                    print(poliza)
+                for p in resultado:
+                    print(p)
             else:
                 print("No se encontraron pólizas de ese tipo")
-                
         elif opcion == "5":
             try:
                 id_buscado = int(input("Ingrese ID de póliza: "))
                 poliza = buscar_poliza_por_id(polizas, id_buscado)
                 if poliza:
-                    costo_base, costo_total = calcular_costo_poliza(poliza)
-                    print(f"\n Cálculo para {poliza.cliente}:")
-                    print(f"Tipo de póliza: {poliza.tipo_poliza}")
-                    print(f"Planilla anual: S/. {poliza.planilla_bruta_mensual * 12:,.2f}")
+                    costo = calcular_costo_poliza(poliza)
+                    print(f"Costo total estimado: S/. {costo:,.2f}")
                     print(f"Tasa de prima: {obtener_tasa_prima(poliza.grupo_riesgo)}%")
-                    print(f"Descuento por trabajadores: {(1 - calcular_descuento_trabajadores(poliza.num_trabajadores)) * 100:.1f}%")
-                    print(f"Factor tipo póliza: {factores_tipo_poliza[poliza.tipo_poliza]}")
-                    print(f"Costo base: S/. {costo_base:,.2f}")
-                    print(f"Cobertura adicional: S/. {poliza.cobertura_adicional:,.2f}")
-                    print(f" COSTO TOTAL: S/. {costo_total:,.2f}")
+                    print(f"Factor tipo póliza: {factores_tipo_poliza.get(poliza.tipo_poliza, 1.0)}")
                 else:
-                    print(" Póliza no encontrada")
+                    print("Póliza no encontrada.")
             except ValueError:
-                print(" ID debe ser un número")
-                
+                print("⚠️ ID inválido.")
         elif opcion == "6":
             mostrar_polizas_pila(polizas)
-            
         elif opcion == "7":
             mostrar_polizas_cola(polizas)
-            
         elif opcion == "8":
-            mostrar_estadisticas_tipos()
-            
+            agregar_nueva_poliza()
         elif opcion == "9":
-            print("¡Hasta luego!")
+            print("Saliendo del sistema...")
             break
-            
         else:
-            print(" Opción no válida")
+            print("Opción no válida.")
 
 if __name__ == "__main__":
     main()
