@@ -6,4 +6,4 @@ id,cliente,fecha_vencimiento,grupo_riesgo,num_trabajadores,planilla_bruta_mensua
 5,Hotel Resort,2025-12-25,II,300,90000.0,SCTR Pension,ACTIVA,Rimac Seguros,+51 955444333,4
 6,Fábrica Textil,2024-11-30,III,200,75000.0,Vida Ley,ACTIVA,Rimac Seguros,+51 944333222,1
 7,Hospital Regional,2025-10-15,II,400,110000.0,SCTR Salud,ACTIVA,Rimac Seguros,+51 933222111,2
-8,BNP Paribas,2026-05-31,II,350,80000.0,Vida Ley,ACTIVA,Cardif,962785456,0
+8,BNP Paribas,2026-05-31,II,350,80000.0,Vida Ley,ACTIVA,Cardif,+51 962785456,0
