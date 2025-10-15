@@ -31,10 +31,10 @@ def cargar_polizas_desde_csv(archivo='csv/polizas.csv'):
                 except (ValueError, KeyError) as e:
                     print(f"Error procesando fila: {row}. Error: {e}")
                     
-        print(f"✅ Se cargaron {len(polizas)} pólizas desde {archivo}")
+        print(f"Se cargaron {len(polizas)} pólizas desde {archivo}")
         return True
     except Exception as e:
-        print(f"❌ Error al cargar CSV: {e}")
+        print(f"Error al cargar CSV: {e}")
         return False
 
 def guardar_polizas_en_csv(archivo='csv/polizas.csv'):
