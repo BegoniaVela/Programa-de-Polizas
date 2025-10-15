@@ -46,7 +46,7 @@ def main():
             except ValueError:
                 print("ID debe ser un número.")
         elif opcion == "3":
-            filtrar_por_semaforo_simple()
+            filtrar_por_semaforo_simple(polizas)
         elif opcion == "4":
             tipo = input("Tipo de póliza (SCTR Salud, SCTR Pension, Vida Ley): ")
             resultado = [p for p in polizas if p.tipo_poliza == tipo]
