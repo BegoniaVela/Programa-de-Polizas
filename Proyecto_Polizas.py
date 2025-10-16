@@ -18,4 +18,5 @@ from funciones_calculo import (
     calcular_descuento_trabajadores,
     calcular_costo_poliza,
     filtrar_por_semaforo_simple
+
 )
